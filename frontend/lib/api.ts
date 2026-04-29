@@ -1,12 +1,29 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
+export type UniverseParameters = {
+  alpha: number;
+  strong_force: number;
+  electron_mass: number;
+  cosmological_constant: number;
+};
+
+export type SimulationResult = {
+  star_stability: boolean;
+  heavy_elements: boolean;
+  chemistry_score: number;
+  habitability_score: number;
+  explanation: string;
+};
+
 export type GridPoint = {
   alpha: number;
   strong_force: number;
   habitability: number;
 };
 
-export async function simulateUniverse(params: any) {
+export async function simulateUniverse(
+  params: UniverseParameters
+): Promise<SimulationResult> {
   const res = await fetch(`${API_URL}/simulate`, {
     method: "POST",
     headers: {
