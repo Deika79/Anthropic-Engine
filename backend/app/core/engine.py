@@ -10,34 +10,44 @@ from app.services.explanation_service import ExplanationService
 
 
 class SimulationEngine:
-
     @staticmethod
     def run(params: UniverseParameters) -> SimulationResult:
 
-        stars_exist = StellarModel.evaluate(params)
+        # 🌟 estrellas
+        stars_exist = StellarModel.evaluate(
+            params.alpha,
+            params.strong_force
+        )
 
-        heavy_elements = NucleosynthesisModel.evaluate(params, stars_exist)
+        # ⚛️ elementos pesados
+        heavy_elements = NucleosynthesisModel.evaluate(
+            params.strong_force
+        )
 
-        chemistry_score = ChemistryModel.evaluate(params)
+        # 🧪 química
+        chemistry_score = ChemistryModel.evaluate(
+            params.alpha,
+            params.electron_mass
+        )
 
-        habitability = HabitabilityModel.evaluate(
+        # 🌍 habitabilidad
+        habitability_score = HabitabilityModel.evaluate(
             stars_exist,
             heavy_elements,
             chemistry_score
         )
 
         explanation = ExplanationService.generate(
-            params,
             stars_exist,
             heavy_elements,
             chemistry_score,
-            habitability
+            habitability_score
         )
 
         return SimulationResult(
             star_stability=stars_exist,
             heavy_elements=heavy_elements,
             chemistry_score=chemistry_score,
-            habitability_score=habitability,
+            habitability_score=habitability_score,
             explanation=explanation
         )
