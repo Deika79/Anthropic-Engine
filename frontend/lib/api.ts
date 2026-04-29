@@ -1,17 +1,4 @@
-export type UniverseParameters = {
-  alpha: number;
-  strong_force: number;
-  electron_mass: number;
-  cosmological_constant: number;
-};
-
-export type SimulationResult = {
-  star_stability: boolean;
-  heavy_elements: boolean;
-  chemistry_score: number;
-  habitability_score: number;
-  explanation: string;
-};
+const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 export type GridPoint = {
   alpha: number;
@@ -19,12 +6,7 @@ export type GridPoint = {
   habitability: number;
 };
 
-const API_URL = "http://127.0.0.1:8001";
-
-// 🔬 Single simulation
-export async function simulateUniverse(
-  params: UniverseParameters
-): Promise<SimulationResult> {
+export async function simulateUniverse(params: any) {
   const res = await fetch(`${API_URL}/simulate`, {
     method: "POST",
     headers: {
@@ -40,7 +22,6 @@ export async function simulateUniverse(
   return res.json();
 }
 
-// 🌌 Grid simulation
 export async function getUniverseGrid(): Promise<GridPoint[]> {
   const res = await fetch(`${API_URL}/grid`);
 
