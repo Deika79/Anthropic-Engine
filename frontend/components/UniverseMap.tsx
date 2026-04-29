@@ -34,7 +34,6 @@ export default function UniverseMap({ data, currentParams }: Props) {
     // 🔥 HEATMAP
     for (let px = 0; px < width; px++) {
       for (let py = 0; py < height; py++) {
-        // convertir pixel → parámetros
         const alpha =
           alphaMin + (px / width) * (alphaMax - alphaMin);
 
@@ -42,11 +41,10 @@ export default function UniverseMap({ data, currentParams }: Props) {
           strongMin +
           ((height - py) / height) * (strongMax - strongMin);
 
-        // 🔍 nearest neighbor
         let closest: GridPoint | null = null;
         let minDist = Infinity;
 
-        data.forEach((p) => {
+        for (const p of data) {
           const dx = p.alpha - alpha;
           const dy = p.strong_force - strong;
           const dist = dx * dx + dy * dy;
@@ -55,9 +53,13 @@ export default function UniverseMap({ data, currentParams }: Props) {
             minDist = dist;
             closest = p;
           }
-        });
+        }
 
-        const h = closest ? closest.habitability : 0;
+        // ✅ FIX TYPE ERROR
+        const h =
+          closest !== null
+            ? (closest as GridPoint).habitability
+            : 0;
 
         const r = Math.floor(255 * (1 - h));
         const g = Math.floor(255 * h);
@@ -74,7 +76,7 @@ export default function UniverseMap({ data, currentParams }: Props) {
 
     ctx.putImageData(imageData, 0, 0);
 
-    // 📐 ejes
+    // 📐 Ejes
     ctx.strokeStyle = "#aaa";
     ctx.lineWidth = 1;
 
@@ -99,7 +101,7 @@ export default function UniverseMap({ data, currentParams }: Props) {
     ctx.fillText("strong force", 0, 0);
     ctx.restore();
 
-    // 🔴 punto actual
+    // 🔴 Punto actual
     const rawX =
       ((currentParams.alpha - alphaMin) /
         (alphaMax - alphaMin)) *
